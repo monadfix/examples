@@ -1,2 +1,3 @@
-# examples
-Mini-examples for our customers
+# Monadfix examples
+
+Mini-examples for our customers.

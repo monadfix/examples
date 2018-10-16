@@ -1,0 +1,27 @@
+name:                servant-mock
+version:             0.1.0
+homepage:            https://github.com/monadfix/examples
+license:             MIT
+author:              Artyom Kazak
+maintainer:          hi@monadfix.io
+copyright:           2018 Monadfix
+category:            Web
+extra-source-files:
+- README.md
+
+dependencies:
+- base
+- text
+- bytestring
+- mtl
+- wai
+- http-types
+- servant
+- servant-server
+- servant-client
+- servant-client-core
+
+executables:
+  servant-mock:
+    source-dirs:      src
+    main:             Main.hs
