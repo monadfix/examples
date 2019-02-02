@@ -105,7 +105,7 @@ toWaiRequest request =
 -- 'toWaiRequestBody' converts a http-client representation of a request
 -- body to a simpler one employed by WAI.
 --
--- The proof-of-concept only handles the most common response type.
+-- The proof-of-concept doesn't handle streaming request bodies.
 toWaiRequestBody :: HTTP.RequestBody -> IO ByteString
 toWaiRequestBody body = case body of
     HTTP.RequestBodyLBS body' ->
