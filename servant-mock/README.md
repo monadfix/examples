@@ -3,7 +3,9 @@
 This example provides a translation from Servant's requests to WAI requests,
 and from WAI responses to Servant's responses. It allows calling a
 Servant-produced `Application` directly _without seizing a port or doing any
-networking at all._
+networking at all._ You can write functions that use
+`servant-client`-generated bindings, and then run them either against a real
+remote server, or against a mock `Server`.
 
 * [Main.hs][] -- defining a simple mock-server and calling it.
 * [Mock.hs][] -- request-translating machinery.
