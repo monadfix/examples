@@ -4,6 +4,8 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE TypeApplications #-}
 
+{-# OPTIONS_GHC -fno-warn-deprecations #-} -- for requestBody
+
 module Mock
     ( ClientMock
     ) where
@@ -66,9 +68,6 @@ instance RunClient ClientMock where
                 pure Wai.ResponseReceived
         Wai.ResponseReceived <- app (toWaiRequest request) storeResponse
         takeMVar responseMVar
-
-    streamingRequest :: Request -> ClientMock StreamingResponse
-    streamingRequest = error "implement if needed"
 
     throwServantError :: ServantError -> ClientMock a
     throwServantError = lift . throwIO
