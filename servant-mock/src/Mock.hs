@@ -49,7 +49,6 @@ type ClientMock = ReaderT Application IO
 instance RunClient ClientMock where
     runRequest :: Request -> ClientMock Response
     runRequest request = ReaderT $ \app -> do
-        -- The 'Application' gives us its response and we return it.
         responseMVar <- newEmptyMVar @Response
         let storeResponse :: Wai.Response -> IO Wai.ResponseReceived
             storeResponse waiResponse = do
