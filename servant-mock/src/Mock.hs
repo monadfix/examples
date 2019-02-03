@@ -50,20 +50,10 @@ instance RunClient ClientMock where
     runRequest :: Request -> ClientMock Response
     runRequest request = ReaderT $ \app -> do
         -- The 'Application' gives us its response and we return it.
-        --
-        -- Care has to be taken here because the 'Wai.Response' is actually
-        -- just a specification of how the response is constructed (e.g. it
-        -- might read files from the server's host), and after the
-        -- 'Application' finishes, the response might well become invalid.
-        --
-        -- However, since we "execute" this response by converting it to a
-        -- servant-client 'Response', we don't care if the response becomes
-        -- invalid.
         responseMVar <- newEmptyMVar @Response
         let storeResponse :: Wai.Response -> IO Wai.ResponseReceived
             storeResponse waiResponse = do
-                let response = fromWaiResponse waiResponse
-                evaluate response
+                response <- fromWaiResponse waiResponse
                 putMVar responseMVar response
                 pure Wai.ResponseReceived
         Wai.ResponseReceived <- app (toWaiRequest request) storeResponse
@@ -120,19 +110,16 @@ toWaiRequestBody body = case body of
     HTTP.RequestBodyStreamChunked{} ->
         error "toWaiRequestBody: RequestBodyStreamChunked yet unsupported"
 
--- 'fromWaiResponse' executes a response and ensures that once the Servant
--- response has been evaluated, the original WAI response can be safely
--- discarded.
+-- 'fromWaiResponse' executes a response.
 --
 -- The proof-of-concept only handles the most common response type.
-fromWaiResponse :: Wai.Response -> Response
+fromWaiResponse :: Wai.Response -> IO Response
 fromWaiResponse (Wai.ResponseBuilder status headers builder) =
-    let body = Builder.toLazyByteString builder in
-    rnf body `seq` Response
+    pure Response
         { responseStatusCode = status
         , responseHeaders = fromList headers
         , responseHttpVersion = HTTP.http11  -- always HTTP/1.1 for servant-client
-        , responseBody = body
+        , responseBody = Builder.toLazyByteString builder
         }
 fromWaiResponse Wai.ResponseFile{} =
     error "fromWaiResponse: ResponseFile yet unsupported"
